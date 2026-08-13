@@ -95,7 +95,7 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 /* ============ HERO ============ */
 .hero{position:relative;padding:170px 0 100px;background:linear-gradient(180deg,var(--ink2),var(--ink));overflow:hidden}
 .hero-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(640px circle at var(--gx,74%) var(--gy,28%),rgba(79,70,229,.17),transparent 62%)}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative;z-index:2}
 @media(max-width:1080px){.hero-grid{grid-template-columns:1fr;gap:64px}}
 .hero h1{font-size:clamp(2.6rem,5.6vw,4.3rem);font-weight:700;line-height:1.06;letter-spacing:-.03em;margin:20px 0 22px}
 .hero h1 .acc{color:var(--accent)}
@@ -110,6 +110,14 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .hero-frame{border-radius:20px;overflow:hidden;border:1px solid var(--hair-d);box-shadow:0 44px 90px rgba(2,6,17,.65)}
 .kenburns img{animation:kb 16s ease-in-out infinite alternate}
 @keyframes kb{from{transform:scale(1) translate(0,0)}to{transform:scale(1.08) translate(-2%,2%)}}
+/* hero background brain */
+.hero-bg-brain{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.hero-bg-brain img{width:100%;height:100%;object-fit:cover;object-position:center 30%;
+  opacity:.18;mix-blend-mode:screen;
+  transform:scale(1.02);transition:transform 1.4s cubic-bezier(.22,.61,.36,1);will-change:transform}
+@media(prefers-reduced-motion:no-preference){
+  .hero:hover .hero-bg-brain img{transform:scale(1.12)}
+}
 /* ============ TRANSLATED VISUAL MOCKUPS (no embedded text in images) ============ */
 .mock-frame{position:relative;min-height:320px;background-size:cover;background-position:center;background-color:var(--ink2)}
 .hero-frame.mock-frame{min-height:420px;border-radius:20px}
@@ -348,7 +356,8 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
 <main>
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div class="hero-glow" id="heroGlow"></div>
+  <div class="hero-bg-brain" aria-hidden="true"><img src="images/brain-glow.png" alt="" loading="eager" fetchpriority="low"></div>
+  <div class="hero-glow" id="heroGlow" style="z-index:1"></div>
   <div class="container hero-grid">
     <div>
       <span class="kicker rv" id="heroKicker">🧠💬 A mind for every reply · 2026</span>
