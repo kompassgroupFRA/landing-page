@@ -192,8 +192,8 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .f-chip-m{margin-top:auto;font:400 11px var(--fm);letter-spacing:.1em;color:var(--accent);text-transform:uppercase}
 .tinker-box{margin-top:34px;display:grid;grid-template-columns:.9fr 1.1fr;gap:0;border-radius:22px;overflow:hidden;border:1px solid rgba(124,58,237,.4);background:linear-gradient(135deg,rgba(79,70,229,.14),rgba(124,58,237,.1))}
 @media(max-width:960px){.tinker-box{grid-template-columns:1fr}}
-.tinker-img{position:relative;min-height:320px;overflow:hidden}
-.tinker-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tinker-img{position:relative;min-height:480px;overflow:hidden}
+.tinker-img iframe{position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
 .tinker-body{padding:40px 40px}
 .tinker-body h3{font-size:clamp(1.4rem,2.6vw,1.9rem);margin-bottom:12px}
 .tinker-body h3 em{font-style:normal;color:var(--accent)}
@@ -453,15 +453,8 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
       <div class="f-card rv" style="transition-delay:.3s"><span class="f-ico">❤️</span><h3 id="f6t">Emotional AI</h3><p id="f6d">Non risponde solo al testo. Risponde alle emozioni: analisi del sentiment e tono adattato al cliente.</p><span class="f-chip-m" id="f6c">empathy match</span></div>
     </div>
     <div class="tinker-box rv">
-      <div class="tinker-img mock-frame" style="background-image:url('images/brain-network.png')">
-        <div class="tone-bubbles" aria-hidden="true">
-          <span class="tone-b" style="top:14%;left:10%" id="tone1">Tono caldo</span>
-          <span class="tone-b" style="top:8%;left:38%" id="tone2">Tono brand</span>
-          <span class="tone-b" style="top:22%;right:8%" id="tone3">Professionale</span>
-          <span class="tone-b" style="top:48%;left:46%" id="tone4">Empatico</span>
-          <span class="tone-b" style="bottom:20%;left:6%" id="tone5">Energico</span>
-          <span class="tone-b" style="bottom:12%;right:14%" id="tone6">Affidabile</span>
-        </div>
+      <div class="tinker-img">
+        <iframe src="brain-3d.html" title="Cervello neurale 3D interattivo" loading="lazy" allowfullscreen></iframe>
       </div>
       <div class="tinker-body">
         <h3 id="tinkerTitle">La differenza è il <em>Tinker Mode</em></h3>
