@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Verifica email · ReplyMind</title>
+<meta name="description" id="pageDesc" content="Conferma il tuo indirizzo email per attivare il trial ReplyMind.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='48' rx='14' fill='%234F46E5'/%3E%3Cpath d='M22 52l-8 9v-9z' fill='%234F46E5'/%3E%3Ccircle cx='22' cy='28' r='5' fill='%23F8FAFC'/%3E%3Ccircle cx='33' cy='28' r='5' fill='%2306B6D4'/%3E%3Ccircle cx='44' cy='28' r='5' fill='%237C3AED'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#4F46E5;--accent:#06B6D4;--success:#10B981;--danger:#EF4444;
+  --ink:#0B1120;--panel:#0F172A;--hair:rgba(148,163,184,.14);
+  --txt:#CBD5E1;--muted:#94A3B8;--light:#F8FAFC;
+  --fd:'Space Grotesk','Segoe UI',system-ui,sans-serif;--fb:'Manrope','Segoe UI',system-ui,sans-serif;
+}
+body{font-family:var(--fb);background:var(--ink);color:var(--txt);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.lang-selector{position:fixed;top:16px;right:16px;display:flex;gap:4px}
+.lang-btn{font:600 11px var(--fb);padding:5px 10px;border-radius:6px;color:var(--txt);background:none;border:1px solid transparent;cursor:pointer;text-transform:uppercase;transition:.2s}
+.lang-btn:hover{color:var(--light);border-color:var(--hair)}
+.lang-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(6,182,212,.1)}
+.container{max-width:420px;width:100%;background:var(--panel);border-radius:20px;padding:40px;border:1px solid var(--hair);text-align:center}
+.logo{margin-bottom:22px}
+.logo h1{font-family:var(--fd);color:var(--light);font-size:1.4rem}
+.logo h1 b{color:var(--accent)}
+.big-icon{font-size:52px;margin-bottom:14px}
+h2{color:var(--light);font-family:var(--fd);font-size:20px;margin-bottom:8px}
+p{color:var(--muted);font-size:14px;line-height:1.6}
+.spinner{display:inline-block;margin:16px auto 0;width:26px;height:26px;border:3px solid #1E293B;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-primary{display:inline-block;margin-top:18px;padding:13px 22px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;text-decoration:none;font-family:inherit}
+.hidden{display:none}
+.state-error .big-icon{color:var(--danger)}
+</style>
+</head>
+<body>
+
+<div class="lang-selector" role="group" aria-label="Language / Lingua / Язык / 语言">
+  <button class="lang-btn active" data-lang="it" aria-pressed="true">🇮🇹 IT</button>
+  <button class="lang-btn" data-lang="en" aria-pressed="false">🇬🇧 EN</button>
+  <button class="lang-btn" data-lang="ru" aria-pressed="false">🇷🇺 RU</button>
+  <button class="lang-btn" data-lang="cn" aria-pressed="false">🇨🇳 中文</button>
+</div>
+
+<div class="container">
+  <div class="logo"><h1>Reply<b>Mind</b></h1></div>
+
+  <div id="stateChecking">
+    <div class="big-icon">📧</div>
+    <h2 id="checkingTitle">Verifica in corso...</h2>
+    <p id="checkingSub">Un attimo, stiamo confermando il tuo indirizzo.</p>
+    <div class="spinner"></div>
+  </div>
+
+  <div id="stateOk" class="hidden">
+    <div class="big-icon">✅</div>
+    <h2 id="okTitle">Email verificata!</h2>
+    <p id="okSub">Puoi tornare alla scheda dove hai iniziato la registrazione: continuerà da sola.</p>
+    <a class="btn-primary" href="index.html" id="okBtn">Torna al sito →</a>
+  </div>
+
+  <div id="stateError" class="hidden state-error">
+    <div class="big-icon">⚠️</div>
+    <h2 id="errTitle">Link non valido</h2>
+    <p id="errSub">Il link è scaduto o è già stato usato. Riprova la registrazione dal sito.</p>
+    <a class="btn-primary" href="register.html" id="errBtn">Torna alla registrazione →</a>
+  </div>
+</div>
+
+<script src="legal-i18n.js"></script>
+<script src="verify-email-i18n.js"></script>
+</body>
+</html>

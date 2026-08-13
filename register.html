@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Crea il tuo account · ReplyMind</title>
+<meta name="description" id="pageDesc" content="Registrati a ReplyMind: 100 risposte AI gratuite, nessuna carta di credito richiesta.">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='48' rx='14' fill='%234F46E5'/%3E%3Cpath d='M22 52l-8 9v-9z' fill='%234F46E5'/%3E%3Ccircle cx='22' cy='28' r='5' fill='%23F8FAFC'/%3E%3Ccircle cx='33' cy='28' r='5' fill='%2306B6D4'/%3E%3Ccircle cx='44' cy='28' r='5' fill='%237C3AED'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#4F46E5;--accent:#06B6D4;--success:#10B981;--danger:#EF4444;
+  --ink:#0B1120;--panel:#0F172A;--field:#1E293B;--hair:rgba(148,163,184,.14);
+  --txt:#CBD5E1;--muted:#94A3B8;--light:#F8FAFC;
+  --fd:'Space Grotesk','Segoe UI',system-ui,sans-serif;--fb:'Manrope','Segoe UI',system-ui,sans-serif;
+}
+body{font-family:var(--fb);background:var(--ink);color:var(--txt);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.lang-selector{position:fixed;top:16px;right:16px;display:flex;gap:4px}
+.lang-btn{font:600 11px var(--fb);padding:5px 10px;border-radius:6px;color:var(--txt);background:none;border:1px solid transparent;cursor:pointer;text-transform:uppercase;transition:.2s}
+.lang-btn:hover{color:var(--light);border-color:var(--hair)}
+.lang-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(6,182,212,.1)}
+.container{max-width:420px;width:100%;background:var(--panel);border-radius:20px;padding:40px;border:1px solid var(--hair)}
+.logo{text-align:center;margin-bottom:26px}
+.logo h1{font-family:var(--fd);color:var(--light);font-size:1.5rem}
+.logo h1 b{color:var(--accent)}
+.trial-badge{display:inline-block;background:rgba(6,182,212,.15);color:var(--accent);padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;margin-top:10px}
+h2{color:var(--light);font-family:var(--fd);font-size:20px;margin-bottom:6px}
+.step-sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--muted)}
+.form-group input{width:100%;padding:12px 16px;background:var(--field);border:1px solid var(--hair);border-radius:10px;color:var(--light);font-size:15px;font-family:inherit;transition:border-color .3s}
+.form-group input:focus{outline:none;border-color:var(--primary)}
+.btn-primary{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .3s,transform .2s}
+.btn-primary:hover:not(:disabled){background:#5b52f0;transform:translateY(-2px)}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed}
+.msg{font-size:13px;margin-top:10px;border-radius:8px;padding:10px 12px;display:none}
+.msg.error{color:#FCA5A5;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35)}
+.msg.success{color:#6EE7B7;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35)}
+.terms{font-size:12px;color:#64748B;margin-top:16px;text-align:center}
+.terms a{color:var(--accent);text-decoration:none}
+.terms a:hover{text-decoration:underline}
+.checklist{background:var(--field);border-radius:10px;padding:14px 18px;margin:16px 0;font-size:13px}
+.checklist li{list-style:none;padding:4px 0;color:var(--muted)}
+.checklist li::before{content:'✓ ';color:var(--success)}
+.center{text-align:center;padding:16px 0}
+.big-icon{font-size:52px;margin-bottom:14px}
+.spinner{display:inline-block;margin:14px auto 0;width:24px;height:24px;border:3px solid var(--field);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none}
+#sentEmail{color:var(--light)}
+</style>
+</head>
+<body>
+
+<div class="lang-selector" role="group" aria-label="Language / Lingua / Язык / 语言">
+  <button class="lang-btn active" data-lang="it" aria-pressed="true">🇮🇹 IT</button>
+  <button class="lang-btn" data-lang="en" aria-pressed="false">🇬🇧 EN</button>
+  <button class="lang-btn" data-lang="ru" aria-pressed="false">🇷🇺 RU</button>
+  <button class="lang-btn" data-lang="cn" aria-pressed="false">🇨🇳 中文</button>
+</div>
+
+<div class="container">
+  <div class="logo">
+    <h1>Reply<b>Mind</b></h1>
+    <span class="trial-badge" id="trialBadge">🎯 100 risposte gratuite</span>
+  </div>
+
+  <!-- Step 1: form -->
+  <div id="step1">
+    <h2 id="s1Title">Crea il tuo account</h2>
+    <p class="step-sub" id="s1Sub">Inizia il trial con 100 risposte AI gratuite</p>
+
+    <div class="form-group">
+      <label id="lblName">Nome</label>
+      <input type="text" id="nameInput" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label id="lblEmail">Email</label>
+      <input type="email" id="emailInput" placeholder="tuo@email.com" autocomplete="email">
+    </div>
+
+    <ul class="checklist" id="checklistFree">
+      <li id="cl1">100 risposte AI gratuite</li>
+      <li id="cl2">Tutti i marketplace supportati</li>
+      <li id="cl3">Nessuna carta di credito richiesta</li>
+      <li id="cl4">🔒 BYOK — i tuoi dati rimangono tuoi</li>
+    </ul>
+    <ul class="checklist hidden" id="checklistPaid">
+      <li id="clp1">Continuerai su Telegram per il pagamento</li>
+      <li id="clp2">Stars, carta o crypto</li>
+      <li id="clp3">Licenza attivata subito dopo il pagamento</li>
+    </ul>
+
+    <div id="errorMsg" class="msg error"></div>
+
+    <button class="btn-primary" id="registerBtn">🎯 Inizia il Trial →</button>
+
+    <p class="terms" id="termsLine">Continuando accetti i <a href="terms.html" id="termsLink">Termini di Servizio</a> e la <a href="privacy.html" id="privacyLink">Privacy Policy</a></p>
+  </div>
+
+  <!-- Step 2: attesa verifica -->
+  <div id="step2" class="hidden">
+    <div class="center">
+      <div class="big-icon">📧</div>
+      <h2 id="s2Title">Verifica la tua email</h2>
+      <p class="step-sub">
+        <span id="s2Sub">Abbiamo inviato un link di verifica a</span>
+        <strong id="sentEmail"></strong>
+      </p>
+      <div class="spinner" id="spinner"></div>
+      <div id="verifyStatus" style="margin-top:16px;font-size:14px;"></div>
+    </div>
+  </div>
+
+  <!-- Step 3a: trial attivato -->
+  <div id="step3trial" class="hidden">
+    <div class="center">
+      <div class="big-icon">🎉</div>
+      <h2 id="s3tTitle">Trial attivato!</h2>
+      <p class="step-sub" id="s3tSub">Hai 100 risposte AI gratuite. Installa l'estensione e inizia a generare risposte su qualsiasi marketplace supportato.</p>
+      <a class="btn-primary" id="s3tBtn" style="display:inline-block;text-decoration:none" href="index.html">Torna al sito →</a>
+    </div>
+  </div>
+
+  <!-- Step 3b: verificato, redirect al bot per pagare -->
+  <div id="step3pay" class="hidden">
+    <div class="center">
+      <div class="big-icon">✅</div>
+      <h2 id="s3pTitle">Email verificata!</h2>
+      <p class="step-sub" id="s3pSub">Ti stiamo portando su Telegram per completare il pagamento.</p>
+      <div class="spinner" id="spinnerPay"></div>
+      <a class="btn-primary hidden" id="s3pBtn" style="display:inline-block;text-decoration:none;margin-top:10px" href="#">Apri Telegram →</a>
+    </div>
+  </div>
+</div>
+
+<script src="legal-i18n.js"></script>
+<script src="register.js"></script>
+<script src="register-i18n.js"></script>
+</body>
+</html>
