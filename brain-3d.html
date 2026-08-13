@@ -6,11 +6,9 @@
 <title>Brain 3D</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#040a1c}
+html,body{width:100%;height:100%;overflow:hidden;background:#020510}
 #c{position:fixed;inset:0;display:block;cursor:grab}
 #c:active{cursor:grabbing}
-.vig{position:fixed;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at 50% 45%,transparent 30%,rgba(2,6,18,.7) 100%)}
 </style>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -18,7 +16,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#040a1c}
 </head>
 <body>
 <canvas id="c"></canvas>
-<div class="vig"></div>
 <script type="module">
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -29,143 +26,232 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 /* ---------- rumore ---------- */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
-const rng=mulberry32(1234);
+const rng=mulberry32(42);
 const perm=new Uint8Array(512);
-{const b=new Uint8Array(256);for(let i=0;i<256;i++)b[i]=i;for(let i=255;i>0;i--){const j=Math.floor(rng()*(i+1));const tmp=b[i];b[i]=b[j];b[j]=tmp;}for(let i=0;i<512;i++)perm[i]=b[i&255];}
+{const b=new Uint8Array(256);for(let i=0;i<256;i++)b[i]=i;for(let i=255;i>0;i--){const j=Math.floor(rng()*(i+1));[b[i],b[j]]=[b[j],b[i]];}for(let i=0;i<512;i++)perm[i]=b[i&255];}
 function vN(x,y,z){
   const X=Math.floor(x),Y=Math.floor(y),Z=Math.floor(z);
   const fx=x-X,fy=y-Y,fz=z-Z,u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy),w=fz*fz*(3-2*fz);
   const h=(i,j,k)=>perm[(perm[(perm[(X+i)&255]+Y+j)&255]+Z+k)&255]/255;
   const x00=h(0,0,0)+(h(1,0,0)-h(0,0,0))*u,x10=h(0,1,0)+(h(1,1,0)-h(0,1,0))*u;
   const x01=h(0,0,1)+(h(1,0,1)-h(0,0,1))*u,x11=h(0,1,1)+(h(1,1,1)-h(0,1,1))*u;
-  return (x00+(x10-x00)*v)+((x01+(x11-x01)*v-(x00+(x10-x00)*v))*w);
+  return x00+(x10-x00)*v+((x01+(x11-x01)*v-(x00+(x10-x00)*v))*w);
 }
 function fbm(x,y,z,o){let a=0.5,f=1,s=0;for(let i=0;i<o;i++){s+=a*vN(x*f,y*f,z*f);f*=2;a*=0.5;}return s;}
 
 /* ---------- renderer ---------- */
 const canvas=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.1;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.shadowMap.enabled=true;
 
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x040a1c);
+scene.background=new THREE.Color(0x020510);
+scene.fog=new THREE.FogExp2(0x020510,0.14);
+
 const pmrem=new THREE.PMREMGenerator(renderer);
-scene.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+scene.environment=pmrem.fromScene(new RoomEnvironment(),0.02).texture;
 
-/* camera fissa, centrata sul cervello */
-const camera=new THREE.PerspectiveCamera(44,innerWidth/innerHeight,0.1,100);
-camera.position.set(0,0.15,3.2);
-camera.lookAt(0,-0.05,0);
+/* camera */
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,60);
+camera.position.set(0,0.2,3.0);
+camera.lookAt(0,0,0);
 
-const kl=new THREE.DirectionalLight(0xbfd4ff,2.0);kl.position.set(3,4,2);scene.add(kl);
-const rl=new THREE.DirectionalLight(0x8b5cf6,1.4);rl.position.set(-4,-2,-3);scene.add(rl);
+/* ---------- luci come nel video ---------- */
+// luce principale alta destra, bianca-calda, intensa → riflesso brillante
+const mainL=new THREE.DirectionalLight(0xffffff,12);
+mainL.position.set(3,5,2);
+scene.add(mainL);
 
-/* ---------- cervello ---------- */
-const brainGrp=new THREE.Group();scene.add(brainGrp);
-const BS=new THREE.Vector3(0.95,0.85,1.25);
-const glassMat=new THREE.MeshPhysicalMaterial({
-  color:0xdfe8ff,metalness:0,roughness:0.16,transmission:1.0,thickness:1.8,
-  ior:1.35,clearcoat:1,clearcoatRoughness:0.25,
-  attenuationColor:0x9aa8ff,attenuationDistance:2.6,envMapIntensity:1.1});
+// rim sinistra bassa, viola freddo
+const rimL=new THREE.DirectionalLight(0x6633cc,3.5);
+rimL.position.set(-4,-1,-2);
+scene.add(rimL);
 
+// fill frontale basso, blu
+const fillL=new THREE.DirectionalLight(0x1a3a8f,2.0);
+fillL.position.set(0,-2,4);
+scene.add(fillL);
+
+// punto luce blu sul tronco (effetto glow base)
+const stemL=new THREE.PointLight(0x00aaff,4,2.5);
+stemL.position.set(0,-1.6,0);
+scene.add(stemL);
+
+/* ---------- materiale metallico scuro (come nel video) ---------- */
+const brainMat=new THREE.MeshPhysicalMaterial({
+  color:0x0a1428,
+  metalness:0.9,
+  roughness:0.12,
+  clearcoat:1.0,
+  clearcoatRoughness:0.08,
+  reflectivity:1.0,
+  envMapIntensity:1.4
+});
+
+const ringMat=new THREE.MeshPhysicalMaterial({
+  color:0x1a2a4a,
+  metalness:0.95,
+  roughness:0.08,
+  clearcoat:1.0,
+  clearcoatRoughness:0.05,
+  envMapIntensity:1.6
+});
+
+/* ---------- gruppo principale ---------- */
+const brainGrp=new THREE.Group();
+brainGrp.position.y=0.1;
+scene.add(brainGrp);
+const BS=new THREE.Vector3(1.0,0.88,1.18);
+
+/* corteccia */
 function mkCortex(){
-  const g=new THREE.SphereGeometry(1,160,160),pa=g.attributes.position,d=new THREE.Vector3();
+  const g=new THREE.SphereGeometry(1,200,200),pa=g.attributes.position,d=new THREE.Vector3();
   for(let i=0;i<pa.count;i++){
     d.fromBufferAttribute(pa,i).normalize();
-    const disp=0.16*(fbm(d.x*1.4+3,d.y*1.4,d.z*1.4,3)-.5)
-              +0.09*(fbm(d.x*3.1,d.y*3.1+7,d.z*3.1,3)-.5)
-              +0.13*((1-Math.abs(2*fbm(d.x*2.3+13,d.y*2.3,d.z*2.3+5,4)-1))-.5);
-    const r=1+disp;let py=d.y*r;if(py<-.35)py*=.88;
+    const big=fbm(d.x*1.3+3,d.y*1.3,d.z*1.3,3)-.5;
+    const mid=fbm(d.x*2.8,d.y*2.8+7,d.z*2.8,3)-.5;
+    const gyrus=1-Math.abs(2*fbm(d.x*2.2+13,d.y*2.2,d.z*2.2+5,4)-1);
+    const disp=0.18*big+0.10*mid+0.15*(gyrus-.5);
+    const r=1+disp;
+    let py=d.y*r;if(py<-.4)py*=.85;
     pa.setXYZ(i,d.x*r,py,d.z*r);
   }
   g.computeVertexNormals();return g;
 }
-const cortex=new THREE.Mesh(mkCortex(),glassMat);cortex.scale.copy(BS);brainGrp.add(cortex);
+const cortex=new THREE.Mesh(mkCortex(),brainMat);
+cortex.scale.copy(BS);
+brainGrp.add(cortex);
 
+/* cervelletto */
 function mkCereb(){
   const g=new THREE.SphereGeometry(1,80,80),pa=g.attributes.position,d=new THREE.Vector3();
   for(let i=0;i<pa.count;i++){
     d.fromBufferAttribute(pa,i).normalize();
-    const r=1+.05*Math.sin(d.y*26)+.05*(fbm(d.x*3+21,d.y*3,d.z*3,3)-.5);
+    const r=1+.06*Math.sin(d.y*28)+.06*(fbm(d.x*3+21,d.y*3,d.z*3,3)-.5);
     pa.setXYZ(i,d.x*r,d.y*r,d.z*r);
   }
   g.computeVertexNormals();return g;
 }
-const cereb=new THREE.Mesh(mkCereb(),glassMat);cereb.scale.set(.62,.48,.55);cereb.position.set(0,-.52,-1.02);brainGrp.add(cereb);
+const cereb=new THREE.Mesh(mkCereb(),brainMat);
+cereb.scale.set(.60,.46,.52);cereb.position.set(0,-.54,-1.0);
+brainGrp.add(cereb);
 
-const stem=new THREE.Mesh(new THREE.CylinderGeometry(.10,.075,.85,24),glassMat);
-stem.position.set(0,-.92,-.62);stem.rotation.x=.32;brainGrp.add(stem);
+/* tronco */
+const stemGroup=new THREE.Group();stemGroup.position.set(0,-1.0,-.55);stemGroup.rotation.x=.28;
+brainGrp.add(stemGroup);
+[{r:.12,h:.5},{r:.10,h:.3},{r:.08,h:.25}].forEach(({r,h},i)=>{
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r*0.85,h,28),brainMat);
+  m.position.y=-i*.35;stemGroup.add(m);
+});
 
-/* ---------- neuroni ---------- */
+/* ---------- anelli (come nel video) ---------- */
+const ringGroup=new THREE.Group();
+ringGroup.position.set(0,-0.85,-.3);
+ringGroup.rotation.x=.15;
+brainGrp.add(ringGroup);
+
+const ringData=[
+  {r:0.62,tube:0.025,y:0.0},
+  {r:0.58,tube:0.022,y:-0.12},
+  {r:0.52,tube:0.020,y:-0.24},
+  {r:0.44,tube:0.018,y:-0.36},
+  {r:0.36,tube:0.016,y:-0.48},
+];
+ringData.forEach(({r,tube,y})=>{
+  const mesh=new THREE.Mesh(new THREE.TorusGeometry(r,tube,16,80),ringMat);
+  mesh.rotation.x=Math.PI/2;mesh.position.y=y;
+  ringGroup.add(mesh);
+});
+
+/* glow luce in cima al tronco (piccola sfera emissiva) */
+const glowCore=new THREE.Mesh(
+  new THREE.SphereGeometry(.045,16,16),
+  new THREE.MeshBasicMaterial({color:0x00ccff,toneMapped:false})
+);
+glowCore.position.set(0,-1.9,-.5);
+const glowSpr=new THREE.Sprite(new THREE.SpriteMaterial({
+  map:(()=>{const cv=document.createElement('canvas');cv.width=cv.height=64;
+    const ctx=cv.getContext('2d'),g2=ctx.createRadialGradient(32,32,0,32,32,32);
+    g2.addColorStop(0,'rgba(0,200,255,1)');g2.addColorStop(.4,'rgba(0,100,255,.4)');g2.addColorStop(1,'rgba(0,0,80,0)');
+    ctx.fillStyle=g2;ctx.fillRect(0,0,64,64);return new THREE.CanvasTexture(cv);})(),
+  transparent:true,blending:THREE.AdditiveBlending,opacity:.9,toneMapped:false
+}));
+glowSpr.position.copy(glowCore.position);glowSpr.scale.setScalar(.5);
+scene.add(glowCore);scene.add(glowSpr);
+
+/* neuroni — sottili, accentano il cervello metallico */
 const neuGrp=new THREE.Group();brainGrp.add(neuGrp);
-const glowCv=document.createElement('canvas');glowCv.width=glowCv.height=128;
-const gCtx=glowCv.getContext('2d'),gg=gCtx.createRadialGradient(64,64,0,64,64,64);
-gg.addColorStop(0,'rgba(140,245,255,1)');gg.addColorStop(.3,'rgba(80,200,255,.45)');gg.addColorStop(1,'rgba(0,80,255,0)');
-gCtx.fillStyle=gg;gCtx.fillRect(0,0,128,128);
+const glowCv=document.createElement('canvas');glowCv.width=glowCv.height=64;
+const gCtx=glowCv.getContext('2d'),gg=gCtx.createRadialGradient(32,32,0,32,32,32);
+gg.addColorStop(0,'rgba(80,200,255,1)');gg.addColorStop(.35,'rgba(40,120,255,.4)');gg.addColorStop(1,'rgba(0,0,128,0)');
+gCtx.fillStyle=gg;gCtx.fillRect(0,0,64,64);
 const glowT=new THREE.CanvasTexture(glowCv);
 
 const neuPos=[];
-for(let n=0;n<15;n++){
-  const d=new THREE.Vector3(rng()*2-1,rng()*2-1,rng()*2-1).normalize(),r=Math.cbrt(rng())*.78;
-  neuPos.push(new THREE.Vector3(d.x*r*BS.x*.92,d.y*r*BS.y*.92,d.z*r*BS.z*.92));
+for(let n=0;n<12;n++){
+  const d=new THREE.Vector3(rng()*2-1,rng()*2-1,rng()*2-1).normalize(),r=Math.cbrt(rng())*.75;
+  neuPos.push(new THREE.Vector3(d.x*r*BS.x*.9,d.y*r*BS.y*.9,d.z*r*BS.z*.9));
 }
-neuPos.push(new THREE.Vector3(0,-1.18,-.74));
-const cGeo=new THREE.SphereGeometry(.055,14,14);
 const sprs=[];
+const cGeo=new THREE.SphereGeometry(.04,10,10);
 neuPos.forEach((p,i)=>{
-  const cm=new THREE.Mesh(cGeo,new THREE.MeshBasicMaterial({color:0x7df3ff,toneMapped:false}));
-  cm.position.copy(p);cm.userData.ph=i*1.7;neuGrp.add(cm);
-  const sm=new THREE.SpriteMaterial({map:glowT,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.85,toneMapped:false});
-  const s=new THREE.Sprite(sm);s.position.copy(p);s.scale.setScalar(.42);s.userData.ph=i*1.7;neuGrp.add(s);
+  const cm=new THREE.Mesh(cGeo,new THREE.MeshBasicMaterial({color:0x40c8ff,toneMapped:false}));
+  cm.position.copy(p);cm.userData.ph=i*1.8;neuGrp.add(cm);
+  const sm=new THREE.SpriteMaterial({map:glowT,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.7,toneMapped:false});
+  const s=new THREE.Sprite(sm);s.position.copy(p);s.scale.setScalar(.32);s.userData.ph=i*1.8;neuGrp.add(s);
   sprs.push({cm,s});
 });
 
-const tubMat=new THREE.MeshBasicMaterial({color:0x9a66ff,transparent:true,opacity:.85,toneMapped:false});
-const pulMat=new THREE.MeshBasicMaterial({color:0xd8fbff,toneMapped:false});
-const pulGeo=new THREE.SphereGeometry(.028,10,10);
+const tubMat=new THREE.MeshBasicMaterial({color:0x6633cc,transparent:true,opacity:.6,toneMapped:false});
+const pulMat=new THREE.MeshBasicMaterial({color:0x80e8ff,toneMapped:false});
+const pulGeo=new THREE.SphereGeometry(.02,8,8);
 const pulses=[];const linked=new Set();
 function conn(a,b){
-  const k=a<b?a+'-'+b:b+'-'+a;if(linked.has(k))return;linked.add(k);
-  const mid=neuPos[a].clone().lerp(neuPos[b],.5).multiplyScalar(1.22);
-  mid.x+=(rng()-.5)*.15;mid.y+=(rng()-.5)*.15;mid.z+=(rng()-.5)*.15;
+  const k=Math.min(a,b)+'-'+Math.max(a,b);if(linked.has(k))return;linked.add(k);
+  const mid=neuPos[a].clone().lerp(neuPos[b],.5).multiplyScalar(1.18);
+  mid.x+=(rng()-.5)*.1;mid.y+=(rng()-.5)*.1;mid.z+=(rng()-.5)*.1;
   const curve=new THREE.CatmullRomCurve3([neuPos[a].clone(),mid,neuPos[b].clone()]);
-  neuGrp.add(new THREE.Mesh(new THREE.TubeGeometry(curve,40,.016,6,false),tubMat));
+  neuGrp.add(new THREE.Mesh(new THREE.TubeGeometry(curve,32,.012,5,false),tubMat));
   const pm=new THREE.Mesh(pulGeo,pulMat);neuGrp.add(pm);
-  pulses.push({curve,pm,t:rng(),spd:.12+rng()*.22});
+  pulses.push({curve,pm,t:rng(),spd:.15+rng()*.2});
 }
 for(let i=0;i<neuPos.length;i++){let bj=-1,bd=1e9;for(let j=0;j<neuPos.length;j++){if(j===i)continue;const ds=neuPos[i].distanceToSquared(neuPos[j]);if(ds<bd){bd=ds;bj=j;}}conn(i,bj);}
-for(let e=0;e<6;e++)conn(Math.floor(rng()*neuPos.length),Math.floor(rng()*neuPos.length));
-
-/* pulviscolo */
-const dArr=new Float32Array(200*3);
-for(let d=0;d<200;d++){const v=new THREE.Vector3(rng()*2-1,rng()*2-1,rng()*2-1).normalize().multiplyScalar(2.5+rng()*2);dArr[d*3]=v.x;dArr[d*3+1]=v.y;dArr[d*3+2]=v.z;}
-const dustG=new THREE.BufferGeometry();dustG.setAttribute('position',new THREE.BufferAttribute(dArr,3));
-const dust=new THREE.Points(dustG,new THREE.PointsMaterial({color:0x2a4faa,size:.025,transparent:true,opacity:.5,blending:THREE.AdditiveBlending,depthWrite:false}));
-scene.add(dust);
+for(let e=0;e<5;e++)conn(Math.floor(rng()*neuPos.length),Math.floor(rng()*neuPos.length));
 
 /* ---------- bloom ---------- */
 const comp=new EffectComposer(renderer);
 comp.addPass(new RenderPass(scene,camera));
-comp.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.85,.7,.55));
+comp.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),1.1,.5,.4));
 comp.addPass(new OutputPass());
 
-/* ---------- drag: ruota brainGrp, non la camera ---------- */
-let drag=false,lastX=0,velX=0,inerX=0;
-canvas.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;velX=0;canvas.setPointerCapture(e.pointerId);});
-canvas.addEventListener('pointermove',e=>{
-  if(!drag)return;
-  const dx=e.clientX-lastX;velX=dx;
-  brainGrp.rotation.y+=dx*0.01;lastX=e.clientX;
+/* ---------- drag 3D libero su X e Y (come nel video) ---------- */
+let isDrag=false,lastX=0,lastY=0,velX=0,velY=0;
+const _qX=new THREE.Quaternion(),_qY=new THREE.Quaternion();
+const AX=new THREE.Vector3(1,0,0),AY=new THREE.Vector3(0,1,0);
+
+canvas.addEventListener('pointerdown',e=>{
+  isDrag=true;lastX=e.clientX;lastY=e.clientY;velX=0;velY=0;
+  canvas.setPointerCapture(e.pointerId);
 });
-canvas.addEventListener('pointerup',()=>{drag=false;inerX=velX;});
-canvas.addEventListener('pointerleave',()=>{drag=false;inerX=velX;});
+canvas.addEventListener('pointermove',e=>{
+  if(!isDrag)return;
+  const dx=e.clientX-lastX,dy=e.clientY-lastY;
+  _qY.setFromAxisAngle(AY,dx*.012);
+  _qX.setFromAxisAngle(AX,dy*.012);
+  brainGrp.quaternion.premultiply(_qY).premultiply(_qX);
+  velX=dx;velY=dy;lastX=e.clientX;lastY=e.clientY;
+});
+canvas.addEventListener('pointerup',()=>{isDrag=false;});
+canvas.addEventListener('pointerleave',()=>{isDrag=false;});
 
 /* scroll zoom */
 canvas.addEventListener('wheel',e=>{
-  camera.position.z=Math.max(2,Math.min(5.5,camera.position.z+e.deltaY*0.008));
+  camera.position.z=Math.max(1.8,Math.min(5.5,camera.position.z+e.deltaY*.006));
 },{passive:true});
 
 /* resize */
@@ -176,25 +262,38 @@ window.addEventListener('resize',()=>{
 
 /* ---------- loop ---------- */
 const clock=new THREE.Clock();
-const AUTO_SPEED=0.35; // rad/s ≈ una rotazione ogni ~18s
+const AUTO=0.28; // rad/s auto-rotazione Y
 renderer.setAnimationLoop(()=>{
   const dt=clock.getDelta(),el=clock.elapsedTime;
-  /* auto-rotazione sull'asse Y del cervello */
-  if(!drag){
-    inerX*=0.92; // inerzia al rilascio
-    brainGrp.rotation.y+=AUTO_SPEED*dt + inerX*0.01;
+
+  if(!isDrag){
+    // inerzia
+    velX*=.90;velY*=.90;
+    _qY.setFromAxisAngle(AY,AUTO*dt+velX*.008);
+    _qX.setFromAxisAngle(AX,velY*.008);
+    brainGrp.quaternion.premultiply(_qY).premultiply(_qX);
   }
-  /* dondolio lieve */
-  brainGrp.rotation.x=Math.sin(el*.38)*.04;
-  brainGrp.position.y=Math.sin(el*.75)*.03;
-  dust.rotation.y=el*.018;
-  /* pulse neuroni */
+
+  // dondolio lieve in posizione
+  brainGrp.position.y=0.1+Math.sin(el*.7)*.025;
+
+  // pulsazione anelli
+  const rs=1+.008*Math.sin(el*2.2);
+  ringGroup.scale.setScalar(rs);
+
+  // glow stem
+  stemL.intensity=3.5+1.5*Math.sin(el*3.1);
+  glowSpr.material.opacity=.7+.25*Math.sin(el*3.1);
+  glowCore.scale.setScalar(.9+.15*Math.sin(el*3.1));
+
+  // neuroni
   sprs.forEach(({cm,s})=>{
-    const sc=1+.28*Math.sin(el*2.6+cm.userData.ph);
+    const sc=1+.25*Math.sin(el*2.5+cm.userData.ph);
     cm.scale.setScalar(sc);
-    s.material.opacity=.6+.3*Math.sin(el*2.6+s.userData.ph);
+    s.material.opacity=.5+.25*Math.sin(el*2.5+s.userData.ph);
   });
   pulses.forEach(pl=>{pl.t=(pl.t+dt*pl.spd)%1;pl.pm.position.copy(pl.curve.getPoint(pl.t));});
+
   comp.render();
 });
 </script>
