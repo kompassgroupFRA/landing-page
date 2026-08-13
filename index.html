@@ -123,6 +123,21 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 @media(prefers-reduced-motion:no-preference){
   .hero:hover .hero-bg-brain{background-size:120%}
 }
+/* recensioni section — fixed parallax brain + zoom-on-hover */
+.recensioni-bg-brain{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:url('images/brain-network.png');
+  background-size:55%;
+  background-position:center center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  opacity:.28;
+  transition:background-size 1.4s cubic-bezier(.22,.61,.36,1);
+}
+@media(prefers-reduced-motion:no-preference){
+  #recensioni:hover .recensioni-bg-brain{background-size:72%}
+}
+#recensioni .container{position:relative;z-index:1}
 /* ============ TRANSLATED VISUAL MOCKUPS (no embedded text in images) ============ */
 .mock-frame{position:relative;min-height:320px;background-size:cover;background-position:center;background-color:var(--ink2)}
 .hero-frame.mock-frame{min-height:420px;border-radius:20px}
@@ -595,6 +610,7 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
 
 <!-- ============ 05 RECENSIONI ============ -->
 <section id="recensioni" class="sec light">
+  <div class="recensioni-bg-brain" aria-hidden="true"></div>
   <span class="sec-num" aria-hidden="true">05</span>
   <div class="container">
     <span class="kicker rv" id="rKicker">05 · Trust &amp; social proof</span>
