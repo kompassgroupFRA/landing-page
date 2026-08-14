@@ -91,7 +91,7 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .lang-btn{font:600 11px var(--fb);padding:4px 10px;border-radius:6px;color:var(--txt-d);transition:.25s;border:1px solid transparent;text-transform:uppercase}
 .lang-btn:hover{color:var(--light);border-color:var(--hair-d)}
 .lang-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(6,182,212,.1)}
-@media(max-width:920px){.nav-links{display:none}.ham-btn{display:flex}}
+@media(max-width:920px){.nav-links{display:none}}
 /* ============ HERO ============ */
 .hero{position:relative;padding:170px 0 100px;background:linear-gradient(180deg,var(--ink2),var(--ink));overflow:hidden}
 .hero-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(640px circle at var(--gx,74%) var(--gy,28%),rgba(79,70,229,.17),transparent 62%)}
@@ -114,7 +114,7 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .hero-bg-brain{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:url('images/brain-glow.png');
-  background-size:106%;
+  background-size:cover;
   background-position:center 30%;
   background-repeat:no-repeat;
   background-attachment:fixed;
@@ -128,11 +128,12 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .recensioni-bg-brain{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:url('images/brain-network.png');
-  background-size:96%;
+  background-size:cover;
   background-position:center center;
   background-repeat:no-repeat;
   background-attachment:fixed;
-  opacity:.60;
+  opacity:.90;
+  mix-blend-mode:multiply;
   transition:background-size 1.4s cubic-bezier(.22,.61,.36,1);
 }
 @media(prefers-reduced-motion:no-preference){
@@ -343,6 +344,7 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
 .ham-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .ham-btn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .ham-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:920px){.ham-btn{display:flex}}
 /* ============ MOBILE MENU OVERLAY ============ */
 .mob-menu{display:none;position:fixed;inset:0;z-index:98;background:rgba(5,9,20,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);flex-direction:column;padding:80px 28px 40px;overflow-y:auto}
 .mob-menu.open{display:flex}
@@ -356,13 +358,13 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
 /* ============ MOBILE RESPONSIVE ============ */
 /* iOS Safari: background-attachment:fixed non supportato — switch a scroll */
 @supports (-webkit-touch-callout:none){
-  .hero-bg-brain{background-attachment:scroll;background-size:70%;background-position:center center;background-repeat:no-repeat;opacity:.06}
-  .recensioni-bg-brain{background-attachment:scroll;background-size:85%;background-repeat:no-repeat;opacity:.45}
+  .hero-bg-brain{background-attachment:scroll;background-size:cover;background-position:center center;opacity:.06}
+  .recensioni-bg-brain{background-attachment:scroll;background-size:cover;opacity:.85}
 }
 /* Tablet e mobile: disabilita parallax fisso */
 @media(max-width:1024px){
-  .hero-bg-brain{background-attachment:scroll;background-size:75%;background-position:center center;background-repeat:no-repeat;opacity:.08}
-  .recensioni-bg-brain{background-attachment:scroll;background-size:88%;background-repeat:no-repeat;opacity:.48}
+  .hero-bg-brain{background-attachment:scroll;background-size:cover;background-position:center center;opacity:.08}
+  .recensioni-bg-brain{background-attachment:scroll;background-size:cover;opacity:.85}
 }
 /* Navbar mobile: nascondi elementi desktop */
 @media(max-width:920px){
