@@ -128,16 +128,13 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .recensioni-bg-brain{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:url('images/freepik_br_3414f59d-f3a2-4984-8afe-6a1c04935cd9.png');
-  background-size:70%;
+  background-size:cover;
   background-position:center center;
   background-repeat:no-repeat;
   background-attachment:fixed;
   opacity:.65;
   filter:brightness(.5) saturate(2) contrast(1.4);
-  transition:background-size 1.4s cubic-bezier(.22,.61,.36,1);
-}
-@media(prefers-reduced-motion:no-preference){
-  #recensioni:hover .recensioni-bg-brain{background-size:76%}
+  transition:opacity .4s;
 }
 #recensioni .container{position:relative;z-index:1}
 /* ============ TRANSLATED VISUAL MOCKUPS (no embedded text in images) ============ */
@@ -316,8 +313,8 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .testi b{display:block;font:700 14px var(--fd);color:var(--dark)}
 .testi small{font:400 11px var(--fm);letter-spacing:.1em;color:#64748B;text-transform:uppercase}
 .brands-row{margin-top:52px;display:flex;justify-content:center;gap:44px;flex-wrap:wrap;align-items:center}
-.brands-row span{font:700 19px var(--fd);letter-spacing:.02em;color:rgba(30,41,59,.35);transition:.3s}
-.brands-row span:hover{color:var(--primary)}
+.brands-row span{font:900 22px var(--fd);letter-spacing:.04em;color:#334155;transition:.3s}
+.brands-row span:hover{color:var(--primary);transform:translateY(-2px)}
 .os-banner{margin-top:64px;background:var(--ink2);border-radius:22px;padding:44px 40px;text-align:center;position:relative;overflow:hidden}
 .os-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(500px circle at 50% 0%,rgba(79,70,229,.2),transparent 70%)}
 .os-banner h3{font-size:clamp(1.5rem,3vw,2.1rem);position:relative;color:var(--light)}
@@ -359,12 +356,12 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
 /* iOS Safari: background-attachment:fixed non supportato — switch a scroll */
 @supports (-webkit-touch-callout:none){
   .hero-bg-brain{background-attachment:scroll;background-size:cover;background-position:center center;opacity:.06}
-  .recensioni-bg-brain{background-attachment:scroll;background-size:90%;opacity:.60}
+  .recensioni-bg-brain{background-attachment:scroll;background-size:cover;opacity:.60}
 }
 /* Tablet e mobile: disabilita parallax fisso */
 @media(max-width:1024px){
   .hero-bg-brain{background-attachment:scroll;background-size:cover;background-position:center center;opacity:.08}
-  .recensioni-bg-brain{background-attachment:scroll;background-size:90%;opacity:.60}
+  .recensioni-bg-brain{background-attachment:scroll;background-size:cover;opacity:.60}
 }
 /* Navbar mobile: nascondi elementi desktop */
 @media(max-width:920px){
