@@ -20,7 +20,7 @@
     // PUBLIC_APP_URL) va servito da un dominio api.* separato dal sito statico.
     var API_BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
         ? 'http://localhost:3000'
-        : 'https://api.replymind.ai';
+        : 'https://replymind-api-production.up.railway.app';
 
     var STORAGE_KEY = 'replymind-register-state';
     var params = new URLSearchParams(location.search);
