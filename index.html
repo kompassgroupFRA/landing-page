@@ -91,7 +91,7 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .lang-btn{font:600 11px var(--fb);padding:4px 10px;border-radius:6px;color:var(--txt-d);transition:.25s;border:1px solid transparent;text-transform:uppercase}
 .lang-btn:hover{color:var(--light);border-color:var(--hair-d)}
 .lang-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(6,182,212,.1)}
-@media(max-width:920px){.nav-links{display:none}.lang-selector{margin-left:auto;margin-right:8px}}
+@media(max-width:920px){.nav-links{display:none}.ham-btn{display:flex}}
 /* ============ HERO ============ */
 .hero{position:relative;padding:170px 0 100px;background:linear-gradient(180deg,var(--ink2),var(--ink));overflow:hidden}
 .hero-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(640px circle at var(--gx,74%) var(--gy,28%),rgba(79,70,229,.17),transparent 62%)}
@@ -116,6 +116,7 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
   background-image:url('images/brain-glow.png');
   background-size:106%;
   background-position:center 30%;
+  background-repeat:no-repeat;
   background-attachment:fixed;
   opacity:.18;mix-blend-mode:screen;
   transition:background-size 1.4s cubic-bezier(.22,.61,.36,1);
@@ -127,11 +128,11 @@ header.scrolled{background:rgba(11,17,32,.85);backdrop-filter:blur(14px);border-
 .recensioni-bg-brain{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:url('images/brain-network.png');
-  background-size:88%;
+  background-size:96%;
   background-position:center center;
   background-repeat:no-repeat;
   background-attachment:fixed;
-  opacity:.38;
+  opacity:.60;
   transition:background-size 1.4s cubic-bezier(.22,.61,.36,1);
 }
 @media(prefers-reduced-motion:no-preference){
@@ -335,25 +336,38 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
 .foot-legal{display:flex;gap:20px;flex-wrap:wrap}
 .foot-legal a{color:#94A3B8;transition:color .25s}
 .foot-legal a:hover{color:var(--accent)}
-/* ============ LANGUAGE SWITCHER MOBILE ============ */
-.lang-selector-mobile{display:none;gap:4px;justify-content:center;padding:16px 0 4px;border-bottom:1px solid var(--hair-d)}
-.lang-selector-mobile .lang-btn{font-size:12px;padding:6px 14px}
-@media(max-width:920px){.lang-selector-mobile{display:flex}}
+/* ============ HAMBURGER BUTTON ============ */
+.ham-btn{display:none;flex-direction:column;justify-content:center;gap:5px;width:40px;height:40px;padding:8px;border:1px solid var(--hair-d);background:rgba(13,21,38,.6);border-radius:10px;cursor:pointer;transition:border-color .25s}
+.ham-btn:hover{border-color:var(--accent)}
+.ham-btn span{display:block;width:22px;height:2px;background:var(--txt-d);border-radius:2px;transition:transform .3s,opacity .3s}
+.ham-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.ham-btn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.ham-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+/* ============ MOBILE MENU OVERLAY ============ */
+.mob-menu{display:none;position:fixed;inset:0;z-index:98;background:rgba(5,9,20,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);flex-direction:column;padding:80px 28px 40px;overflow-y:auto}
+.mob-menu.open{display:flex}
+.mob-menu-nav{display:flex;flex-direction:column;border-top:1px solid var(--hair-d)}
+.mob-menu-nav a{font:600 1.25rem var(--fd);color:var(--txt-d);padding:18px 0;border-bottom:1px solid var(--hair-d);transition:color .25s,padding-left .2s}
+.mob-menu-nav a:hover,.mob-menu-nav a.on{color:var(--accent);padding-left:6px}
+.mob-menu-footer{margin-top:auto;padding-top:32px;display:flex;flex-direction:column;gap:20px}
+.mob-lang-row{display:flex;gap:8px;flex-wrap:wrap}
+.mob-lang-row .lang-btn{font-size:12px;padding:7px 14px}
+.mob-menu-footer .btn{justify-content:center;width:100%}
 /* ============ MOBILE RESPONSIVE ============ */
 /* iOS Safari: background-attachment:fixed non supportato — switch a scroll */
 @supports (-webkit-touch-callout:none){
-  .hero-bg-brain{background-attachment:scroll;background-size:160%;background-position:center center}
-  .recensioni-bg-brain{background-attachment:scroll;background-size:130%}
+  .hero-bg-brain{background-attachment:scroll;background-size:70%;background-position:center center;background-repeat:no-repeat;opacity:.06}
+  .recensioni-bg-brain{background-attachment:scroll;background-size:85%;background-repeat:no-repeat;opacity:.45}
 }
 /* Tablet e mobile: disabilita parallax fisso */
 @media(max-width:1024px){
-  .hero-bg-brain{background-attachment:scroll;background-size:140%;background-position:center center}
-  .recensioni-bg-brain{background-attachment:scroll;background-size:120%}
+  .hero-bg-brain{background-attachment:scroll;background-size:75%;background-position:center center;background-repeat:no-repeat;opacity:.08}
+  .recensioni-bg-brain{background-attachment:scroll;background-size:88%;background-repeat:no-repeat;opacity:.48}
 }
-/* Navbar mobile: nascondi flag desktop, usa lang-selector-mobile */
+/* Navbar mobile: nascondi elementi desktop */
 @media(max-width:920px){
   .lang-selector{display:none}
-  .nav-cta{padding:9px 16px;font-size:12.5px}
+  .nav-cta{display:none}
 }
 /* Small mobile ≤640px */
 @media(max-width:640px){
@@ -434,8 +448,30 @@ footer{background:var(--ink2);border-top:1px solid var(--hair-d);padding:60px 0 
       <button class="lang-btn" data-lang="cn" lang="zh-CN" aria-pressed="false">🇨🇳 中文</button>
     </div>
     <button class="btn btn-primary nav-cta" data-cta id="ctaNav">🆓 Prova gratis</button>
+    <button class="ham-btn" id="hamBtn" aria-label="Apri menu" aria-expanded="false" aria-controls="mobMenu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<!-- ============ MOBILE MENU ============ -->
+<div class="mob-menu" id="mobMenu" role="dialog" aria-label="Menu navigazione" aria-modal="true">
+  <nav class="mob-menu-nav">
+    <a href="#sfida" id="mobNavSfida">La sfida</a>
+    <a href="#funzioni" id="mobNavFunzioni">Funzioni</a>
+    <a href="#come" id="mobNavCome">Come funziona</a>
+    <a href="#prezzi" id="mobNavPrezzi">Prezzi</a>
+    <a href="#recensioni" id="mobNavRecensioni">Recensioni</a>
+  </nav>
+  <div class="mob-menu-footer">
+    <div class="mob-lang-row" id="mobLangSel" role="group" aria-label="Lingua">
+      <button class="lang-btn active" data-lang="it" lang="it">🇮🇹 IT</button>
+      <button class="lang-btn" data-lang="en" lang="en">🇬🇧 EN</button>
+      <button class="lang-btn" data-lang="ru" lang="ru">🇷🇺 RU</button>
+      <button class="lang-btn" data-lang="cn" lang="zh-CN">🇨🇳 中文</button>
+    </div>
+    <button class="btn btn-primary" data-cta id="ctaMob">🆓 Prova gratis — 100 Risposte</button>
+  </div>
+</div>
 
 <main>
 <!-- ============ HERO ============ -->
@@ -1734,19 +1770,31 @@ function applyLanguage(lang) {
   try { localStorage.setItem('replymind-lang', lang); } catch(e) {}
 }
 
-/* ============ MOBILE LANGUAGE SELECTOR ============
-   Creato prima del binding e della prima applyLanguage, così i pulsanti mobile
-   ricevono subito lo stato attivo corretto. */
+/* ============ HAMBURGER MENU ============ */
 (function(){
-  var langs=[['it','🇮🇹 IT'],['en','🇬🇧 EN'],['ru','🇷🇺 RU'],['cn','🇨🇳 中文']];
-  var wrap=document.createElement('div');
-  wrap.className='lang-selector-mobile';wrap.id='langMobile';
-  langs.forEach(function(l){
-    var b=document.createElement('button');
-    b.className='lang-btn';b.dataset.lang=l[0];b.textContent=l[1];
-    wrap.appendChild(b);
+  var hamBtn=$('#hamBtn');
+  var mobMenu=$('#mobMenu');
+  if(!hamBtn||!mobMenu) return;
+  function openMenu(){
+    mobMenu.classList.add('open');
+    hamBtn.classList.add('open');
+    hamBtn.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    mobMenu.classList.remove('open');
+    hamBtn.classList.remove('open');
+    hamBtn.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+  hamBtn.addEventListener('click',function(){
+    mobMenu.classList.contains('open') ? closeMenu() : openMenu();
   });
-  $('#header').insertAdjacentElement('afterend', wrap);
+  mobMenu.querySelectorAll('.mob-menu-nav a').forEach(function(a){
+    a.addEventListener('click', closeMenu);
+  });
+  var mobCta=$('#ctaMob');
+  if(mobCta) mobCta.addEventListener('click', closeMenu);
 })();
 
 /* ============ LANGUAGE SELECTOR BINDING (desktop + mobile) ============ */
