@@ -112,7 +112,7 @@
         fetch(API_BASE + '/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, name: name })
+            body: JSON.stringify({ email: email, name: name, plan: requestedPlan || null })
         })
             .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
             .then(function (r) {
